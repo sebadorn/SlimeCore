@@ -119,6 +119,25 @@ var SlimeCore = {
 
 
 	/**
+	 * Generate a UUID.
+	 * @see http://stackoverflow.com/a/2117523/915570
+	 * @return {String}
+	 */
+	generateUUID: function() {
+		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+
+		uuid = uuid.replace( /[xy]/g, function( c ) {
+			var r = Math.random() * 16 | 0;
+			var v = ( c == 'x' ) ? r : ( r & 0x3 | 0x8 );
+
+			return v.toString( 16 );
+		} );
+
+		return uuid;
+	},
+
+
+	/**
 	 * Load a list of JavaScript files.
 	 * @param  {String}        basePath
 	 * @param  {Array<String>} files
