@@ -19,7 +19,8 @@ var SlimeCore = {
 		'Controls.Keyboard',
 		'Grid2D',
 		'Math',
-		'PixiRenderer'
+		'PixiRenderer',
+		'ThreeRenderer'
 	],
 
 
