@@ -24,7 +24,7 @@ SlimeCore.ThreeRenderer = {
 	 *                         - container Parent container to append the canvas to.
 	 *                                     Defaults to document.body.
 	 */
-	init: function( options ) {
+	init( options ) {
 		if( typeof options !== 'object' || options === null ) {
 			options = {};
 		}
@@ -54,7 +54,7 @@ SlimeCore.ThreeRenderer = {
 	 * Application main loop.
 	 * @param {Number} time
 	 */
-	mainLoop: function( time ) {
+	mainLoop( time ) {
 		var self = SlimeCore.ThreeRenderer;
 
 		if( !self._isRunning ) {
@@ -80,7 +80,7 @@ SlimeCore.ThreeRenderer = {
 	 * @param {Number} w
 	 * @param {Number} h
 	 */
-	resize: function( w, h ) {
+	resize( w, h ) {
 		this.renderer.setSize( w, h );
 
 		this.renderer.domElement.style.width = w + 'px';
@@ -91,7 +91,7 @@ SlimeCore.ThreeRenderer = {
 	/**
 	 * Start rendering.
 	 */
-	start: function() {
+	start() {
 		if( this._isRunning === false ) {
 			this._isRunning = true;
 			this._lastFrame = 0;
@@ -103,7 +103,7 @@ SlimeCore.ThreeRenderer = {
 	/**
 	 * Stop rendering.
 	 */
-	stop: function() {
+	stop() {
 		this._isRunning = false;
 		this._lastFrame = 0;
 		cancelAnimationFrame( this._frameRequest );
@@ -114,7 +114,7 @@ SlimeCore.ThreeRenderer = {
 	 * Main loop update function.
 	 * @param {Number} deltaTime
 	 */
-	update: function( deltaTime ) {
+	update( deltaTime ) {
 		throw new Error( '[SlimeCore.ThreeRenderer.update]' +
 			' Update function has to be set by application.' );
 	}

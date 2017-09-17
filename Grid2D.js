@@ -1,44 +1,47 @@
 'use strict';
 
 
-/**
- * A 2D grid for use as acceleration structure.
- * @param {Object} options
- */
-SlimeCore.Grid2D = function( options ) {
-	options = options || {};
+{
 
-	this.width = options.width || 100;
-	this.height = options.height || 100;
-	this.tileWidth = options.tileWidth || 10;
-	this.tileHeight = options.tileHeight || 10;
-
-	this.clear();
-};
+class SlimeCore_Grid2D {
 
 
-SlimeCore.Grid2D.prototype = {
+	/**
+	 * A 2D grid for use as acceleration structure.
+	 * @constructor
+	 * @param {Object} options
+	 */
+	constructor( options ) {
+		options = options || {};
+
+		this.width = options.width || 100;
+		this.height = options.height || 100;
+		this.tileWidth = options.tileWidth || 10;
+		this.tileHeight = options.tileHeight || 10;
+
+		this.clear();
+	}
 
 
 	/**
 	 * Create the tiles.
 	 */
-	_calculateTiles: function() {
+	_calculateTiles() {
 		this.numTilesX = Math.ceil( this.width / this.tileWidth );
 		this.numTilesY = Math.ceil( this.height / this.tileHeight );
 
 		this.tiles = [];
 
-		for( var y = 0; y < this.numTilesY; y++ ) {
-			var arr = [];
+		for( let y = 0; y < this.numTilesY; y++ ) {
+			let arr = [];
 
-			for( var x = 0; x < this.numTilesX; x++ ) {
+			for( let x = 0; x < this.numTilesX; x++ ) {
 				arr.push( [] );
 			}
 
 			this.tiles.push( arr );
 		}
-	},
+	}
 
 
 	/**
@@ -46,25 +49,25 @@ SlimeCore.Grid2D.prototype = {
 	 * and no checks for duplicates will be performed.
 	 * @param {Array<Object>} objects
 	 */
-	add: function( objects ) {
+	add( objects ) {
 		this._population = this._population.concat( objects );
 
 		var invTileW = 1.0 / this.tileWidth;
 		var invTileH = 1.0 / this.tileHeight;
 
-		for( var i = 0; i < objects.length; i++ ) {
-			var o = objects[i];
-			var data = this.fnGetPosAndSize( o );
+		for( let i = 0; i < objects.length; i++ ) {
+			let o = objects[i];
+			let data = this.fnGetPosAndSize( o );
 
-			var xIndexMin = ~~( data.x * invTileW );
-			var xIndexMax = ~~( ( data.x + data.width ) * invTileW );
-			var yIndexMin = ~~( data.y * invTileH );
-			var yIndexMax = ~~( (data.y + data.height ) * invTileH );
+			let xIndexMin = ~~( data.x * invTileW );
+			let xIndexMax = ~~( ( data.x + data.width ) * invTileW );
+			let yIndexMin = ~~( data.y * invTileH );
+			let yIndexMax = ~~( (data.y + data.height ) * invTileH );
 
 			o.__scGrid2DTiles = [];
 
-			for( var y = yIndexMin; y <= yIndexMax; y++ ) {
-				for( var x = xIndexMin; x <= xIndexMax; x++ ) {
+			for( let y = yIndexMin; y <= yIndexMax; y++ ) {
+				for( let x = xIndexMin; x <= xIndexMax; x++ ) {
 					if( !this.tiles[y] || !this.tiles[y][x] ) {
 						continue;
 					}
@@ -74,16 +77,16 @@ SlimeCore.Grid2D.prototype = {
 				}
 			}
 		}
-	},
+	}
 
 
 	/**
 	 * Clear all tiles and reset the population.
 	 */
-	clear: function() {
+	clear() {
 		this._population = [];
 		this._calculateTiles();
-	},
+	}
 
 
 	/**
@@ -92,12 +95,12 @@ SlimeCore.Grid2D.prototype = {
 	 * @param  {Object} o Object of the population.
 	 * @return {Object}   Plain object with the following attributes: x, y, width, height
 	 */
-	fnGetPosAndSize: function( o ) {
+	fnGetPosAndSize( o ) {
 		throw new Error(
 			'[SlimeCore.Grid2D.fnGetPosAndSize]' +
 			' Function not set by application.'
 		);
-	},
+	}
 
 
 	/**
@@ -105,9 +108,9 @@ SlimeCore.Grid2D.prototype = {
 	 * @param  {Object}        o
 	 * @return {Array<Object>}
 	 */
-	getContainingTiles: function( o ) {
+	getContainingTiles( o ) {
 		return o.__scGrid2DTiles || [];
-	},
+	}
 
 
 	/**
@@ -115,27 +118,27 @@ SlimeCore.Grid2D.prototype = {
 	 * @param {Number} w
 	 * @param {Number} h
 	 */
-	resize: function( w, h ) {
+	resize( w, h ) {
 		this.width = w;
 		this.height = h;
 
 		this._calculateTiles();
 		this.populate( this._population );
-	},
+	}
 
 
 	/**
 	 * Update the associations of objects to tiles.
 	 */
-	updatePopulation: function() {
-		for( var i = 0; i < this._population.length; i++ ) {
-			var o = this._population[i];
-			var data = this.fnGetPosAndSize( o );
+	updatePopulation() {
+		for( let i = 0; i < this._population.length; i++ ) {
+			let o = this._population[i];
+			let data = this.fnGetPosAndSize( o );
 		}
-	},
+	}
 
 
-	updateTilesOfObject: function( o ) {
+	updateTilesOfObject( o ) {
 		var data = this.fnGetPosAndSize( o );
 		var invTileW = 1.0 / this.tileWidth;
 		var invTileH = 1.0 / this.tileHeight;
@@ -145,10 +148,10 @@ SlimeCore.Grid2D.prototype = {
 		var yIndexMin = ~~( data.y * invTileH );
 		var yIndexMax = ~~( (data.y + data.height ) * invTileH );
 
-		for( var i = 0; i < o.__scGrid2DTiles.length; i++ ) {
-			var tile = o.__scGrid2DTiles[i];
+		for( let i = 0; i < o.__scGrid2DTiles.length; i++ ) {
+			let tile = o.__scGrid2DTiles[i];
 
-			for( var j = 0; j < tile.length; j++ ) {
+			for( let j = 0; j < tile.length; j++ ) {
 				if( tile[j] === o ) {
 					tile.splice( j, 1 );
 					break;
@@ -158,8 +161,8 @@ SlimeCore.Grid2D.prototype = {
 
 		o.__scGrid2DTiles = [];
 
-		for( var y = yIndexMin; y <= yIndexMax; y++ ) {
-			for( var x = xIndexMin; x <= xIndexMax; x++ ) {
+		for( let y = yIndexMin; y <= yIndexMax; y++ ) {
+			for( let x = xIndexMin; x <= xIndexMax; x++ ) {
 				if( !this.tiles[y] || !this.tiles[y][x] ) {
 					continue;
 				}
@@ -171,4 +174,9 @@ SlimeCore.Grid2D.prototype = {
 	}
 
 
-};
+}
+
+
+SlimeCore.Grid2D = SlimeCore_Grid2D;
+
+}

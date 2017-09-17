@@ -16,22 +16,22 @@ SlimeCore.Controls = {
 	/**
 	 * Handle gamepad events.
 	 */
-	_handleGamepadEvents: function() {
+	_handleGamepadEvents() {
 		// Gamepad connected.
-		window.addEventListener( 'gamepadconnected', function( ev ) {
+		window.addEventListener( 'gamepadconnected', ( ev ) => {
 			SlimeCore.log.info( '[SlimeCore.Controls._handleGamepadEvents]' +
-				' Gamepad ' + ev.gamepad.index + ' connected.' );
+				` Gamepad ${ev.gamepad.index} connected.` );
 
 			this._gamepad[ev.gamepad.index] = new this.Gamepad( ev.gamepad );
-		}.bind( this ) );
+		} );
 
 		// Gamepad disconnected.
-		window.addEventListener( 'gamepaddisconnected', function( ev ) {
+		window.addEventListener( 'gamepaddisconnected', ( ev ) => {
 			SlimeCore.log.info( '[SlimeCore.Controls._handleGamepadEvents]' +
-				' Gamepad ' + ev.gamepad.index + ' disconnected.' );
+				` Gamepad ${ev.gamepad.index} disconnected.` );
 
 			this._gamepad[ev.gamepad.index] = null;
-		}.bind( this ) );
+		} );
 	},
 
 
@@ -39,8 +39,8 @@ SlimeCore.Controls = {
 	 * Get the active controller.
 	 * @return {SlimeCore.Controls.Controller} Either a Keyboard or Gamepad.
 	 */
-	getActiveController: function() {
-		for( var index in this._gamepad ) {
+	getActiveController() {
+		for( let index in this._gamepad ) {
 			if( this._gamepad[index] ) {
 				return this._gamepad[index];
 			}
@@ -53,7 +53,7 @@ SlimeCore.Controls = {
 	/**
 	 * Initialize controls/controllers.
 	 */
-	init: function() {
+	init() {
 		this.getKeyboard();
 		this._handleGamepadEvents();
 	},
@@ -63,7 +63,7 @@ SlimeCore.Controls = {
 	 * Get the connected gamepads.
 	 * @return {Object}
 	 */
-	getGamepads: function() {
+	getGamepads() {
 		return this._gamepad;
 	},
 
@@ -72,7 +72,7 @@ SlimeCore.Controls = {
 	 * Get the keyboard.
 	 * @return {SlimeCore.Controls.Keyboard}
 	 */
-	getKeyboard: function() {
+	getKeyboard() {
 		if( !this._keyboard ) {
 			this._keyboard = new this.Keyboard( 1 );
 		}
@@ -85,7 +85,7 @@ SlimeCore.Controls = {
 	 * Update a gamepad.
 	 * @param {Gamepad} gp Gamepad data.
 	 */
-	updateGamepad: function( gp ) {
+	updateGamepad( gp ) {
 		if( gp === null || !this._gamepad[gp.index] ) {
 			return;
 		}
@@ -97,18 +97,18 @@ SlimeCore.Controls = {
 	/**
 	 * Update the gamepad states.
 	 */
-	updateGamepads: function() {
+	updateGamepads() {
 		var gamepads = navigator.getGamepads();
 
 		if( gamepads instanceof Array ) {
-			for( var i = 0; i < gamepads.length; i++ ) {
-				var gp = gamepads[i];
+			for( let i = 0; i < gamepads.length; i++ ) {
+				let gp = gamepads[i];
 				this.updateGamepad( gp );
 			}
 		}
 		else { // instanceof Object
-			for( var index in gamepads ) {
-				var gp = gamepads[index];
+			for( let index in gamepads ) {
+				let gp = gamepads[index];
 				this.updateGamepad( gp );
 			}
 		}

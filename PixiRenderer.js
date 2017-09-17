@@ -19,7 +19,7 @@ SlimeCore.PixiRenderer = {
 	 * @param  {Object}      options Options.
 	 * @return {HTMLElement}         Renderer view.
 	 */
-	init: function( viewID, w, h, options ) {
+	init( viewID, w, h, options ) {
 		if( !SlimeCore.Utils.isObject( options ) ) {
 			options = {};
 		}
@@ -57,7 +57,7 @@ SlimeCore.PixiRenderer = {
 	 * Application main loop.
 	 * @param {Number} time
 	 */
-	mainLoop: function( time ) {
+	mainLoop( time ) {
 		var self = SlimeCore.PixiRenderer;
 
 		if( !self._isRunning ) {
@@ -78,7 +78,7 @@ SlimeCore.PixiRenderer = {
 	 * @param {Number} w
 	 * @param {Number} h
 	 */
-	resize: function( w, h ) {
+	resize( w, h ) {
 		this.renderer.resize( w, h );
 
 		this.renderer.view.style.width = w + 'px';
@@ -89,7 +89,7 @@ SlimeCore.PixiRenderer = {
 	/**
 	 * Start rendering.
 	 */
-	start: function() {
+	start() {
 		if( this._isRunning === false ) {
 			this._isRunning = true;
 			this._frameRequest = requestAnimationFrame( this.mainLoop );
@@ -100,7 +100,7 @@ SlimeCore.PixiRenderer = {
 	/**
 	 * Stop rendering.
 	 */
-	stop: function() {
+	stop() {
 		this._isRunning = false;
 		cancelAnimationFrame( this._frameRequest );
 	},
@@ -110,7 +110,7 @@ SlimeCore.PixiRenderer = {
 	 * Main loop update function.
 	 * @param {Number} deltaTime
 	 */
-	update: function( deltaTime ) {
+	update( deltaTime ) {
 		throw new Error( '[SlimeCore.PixiRenderer.update]' +
 			' Update function has to be set by application.' );
 	}

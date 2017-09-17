@@ -10,7 +10,7 @@ SlimeCore.Math = {
 	 * @param  {Object}  b
 	 * @return {Boolean}
 	 */
-	collisionTest2D: function( a, b ) {
+	collisionTest2D( a, b ) {
 		var xOverlap = Math.max( 0.0, Math.min( a.x1, b.x1 ) - Math.max( a.x0, b.x0 ) );
 		var yOverlap = Math.max( 0.0, Math.min( a.y1, b.y1 ) - Math.max( a.y0, b.y0 ) );
 
@@ -26,14 +26,14 @@ SlimeCore.Math = {
 	 * @param  {Object}         q1 Another point on line B.
 	 * @return {Object|Boolean}    The intersection point (x, y) or false if the lines are parallel.
 	 */
-	lineIntersection2D: function( p0, q0, p1, q1 ) {
+	lineIntersection2D( p0, q0, p1, q1 ) {
 		var div = ( q1.y - p1.y ) * ( q0.x - p0.x ) - ( q0.y - p0.y ) * ( q1.x - p1.x );
 
 		if( Math.abs( div ) < 0.001 ) {
 			return false;
 		}
 
-		var indDiv = 1.0 / div;
+		var invDiv = 1.0 / div;
 
 		var sx = ( q1.x - p1.x ) * ( q0.x * p0.y - p0.x * q0.y );
 		sx -= ( q0.x - p0.x ) * ( q1.x * p1.y - p1.x * q1.y );
