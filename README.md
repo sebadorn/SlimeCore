@@ -34,3 +34,5 @@ On Linux you have to set some udev rules first. Add a file `/etc/udev/rules.d/61
     sudo udevadm control --reload-rules
 
 Source: https://www.npmjs.com/package/dualshock-controller
+
+Also see my blog post about it: https://sebadorn.de/2017/12/07/using-nw-js-to-communicate-with-a-ds4-controller
