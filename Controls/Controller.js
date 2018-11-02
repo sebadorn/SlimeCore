@@ -16,99 +16,99 @@ class SlimeCore_Controls_Controller {
 
 
 	/**
-	 * Has to be implemented by inheriting object.
+	 * Has to be implemented by extending class.
 	 * @throw {Error}
 	 */
 	getDirections() {
 		throw new Error( '[SlimeCore.Controls.Controller.getDirection]' +
-			' Not implemented by inheriting object.' );
+			' Not implemented by extending class.' );
 	}
 
 
 	/**
-	 * Has to be implemented by inheriting object.
+	 * Has to be implemented by extending class.
+	 * @param  {(number|number[])} key - Key or keys to check if pressed.
+	 * @return {noolean} True, if any of the keys is pressed.
+	 * @throw  {Error}
+	 */
+	isPressed( key ) {
+		throw new Error( '[SlimeCore.Controls.Controller.isPressed]' +
+			' Not implemented by extending class.' );
+	}
+
+
+	/**
+	 * Has to be implemented by extending class.
 	 * @throw {Error}
 	 */
 	isPressedDown() {
 		throw new Error( '[SlimeCore.Controls.Controller.isPressedDown]' +
-			' Not implemented by inheriting object.' );
+			' Not implemented by extending class.' );
 	}
 
 
 	/**
-	 * Has to be implemented by inheriting object.
+	 * Has to be implemented by extending class.
 	 * @throw {Error}
 	 */
 	isPressedLeft() {
 		throw new Error( '[SlimeCore.Controls.Controller.isPressedLeft]' +
-			' Not implemented by inheriting object.' );
+			' Not implemented by extending class.' );
 	}
 
 
 	/**
-	 * Has to be implemented by inheriting object.
+	 * Has to be implemented by extending class.
 	 * @throw {Error}
 	 */
 	isPressedNext() {
 		throw new Error( '[SlimeCore.Controls.Controller.isPressedNext]' +
-			' Not implemented by inheriting object.' );
+			' Not implemented by extending class.' );
 	}
 
 
 	/**
-	 * Has to be implemented by inheriting object.
+	 * Has to be implemented by extending class.
 	 * @throw {Error}
 	 */
 	isPressedPrevious() {
 		throw new Error( '[SlimeCore.Controls.Controller.isPressedPrevious]' +
-			' Not implemented by inheriting object.' );
+			' Not implemented by extending class.' );
 	}
 
 
 	/**
-	 * Has to be implemented by inheriting object.
+	 * Has to be implemented by extending class.
 	 * @throw {Error}
 	 */
 	isPressedRight() {
 		throw new Error( '[SlimeCore.Controls.Controller.isPressedRight]' +
-			' Not implemented by inheriting object.' );
+			' Not implemented by extending class.' );
 	}
 
 
 	/**
-	 * Has to be implemented by inheriting object.
+	 * Has to be implemented by extending class.
 	 * @throw {Error}
 	 */
 	isPressedSelect() {
 		throw new Error( '[SlimeCore.Controls.Controller.isPressedSelect]' +
-			' Not implemented by inheriting object.' );
+			' Not implemented by extending class.' );
 	}
 
 
 	/**
-	 * Has to be implemented by inheriting object.
+	 * Has to be implemented by extending class.
 	 * @throw {Error}
 	 */
 	isPressedUp() {
 		throw new Error( '[SlimeCore.Controls.Controller.isPressedUp]' +
-			' Not implemented by inheriting object.' );
+			' Not implemented by extending class.' );
 	}
 
 
 }
 
-
-SlimeCore_Controls_Controller.INTERACT = {
-	DIALOG: 1,
-	SPECIAL: 2,
-	FIGHT: 3,
-	SELECT: 4,
-
-	SKILL_1: 50,
-	SKILL_2: 51,
-	SKILL_3: 52,
-	SKILL_4: 53
-};
 
 SlimeCore.Controls.Controller = SlimeCore_Controls_Controller;
 

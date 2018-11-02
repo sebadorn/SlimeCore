@@ -12,8 +12,9 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 	 * @extends {SlimeCore.Controls.Controller}
 	 */
 	constructor() {
-		SlimeCore.Controls.Controller.call( this );
+		super();
 
+		this.type = SlimeCore.Controls.TYPE.KEYBOARD;
 		this._keyStateDown = {};
 		this._initHandler();
 	}
@@ -21,6 +22,7 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 
 	/**
 	 * Initialize keyboard listeners.
+	 * @private
 	 */
 	_initHandler() {
 		document.body.addEventListener( 'keydown', this._trackKeyEvents.bind( this ) );
@@ -30,6 +32,7 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 
 	/**
 	 * Track key events.
+	 * @private
 	 * @param {KeyboardEvent} ev
 	 */
 	_trackKeyEvents( ev ) {
@@ -44,7 +47,7 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 
 	/**
 	 * Delete a key state.
-	 * @param {Number} keyCode
+	 * @param {number} keyCode
 	 */
 	deleteKeyState( keyCode ) {
 		delete this._keyStateDown[keyCode];
@@ -55,10 +58,10 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 	 * Get pressed directions represented by a value [0.0, 1.0].
 	 * Keyboards only support 0: not pressed and 1: pressed.
 	 * @override
-	 * @return {Object}
+	 * @return {object}
 	 */
 	getDirections() {
-		var dir = {
+		let dir = {
 			down: Number( this.isPressedDown() ),
 			left: Number( this.isPressedLeft() ),
 			right: Number( this.isPressedRight() ),
@@ -76,12 +79,22 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 
 	/**
 	 * Check if a certain key is currently pressed.
-	 * @param  {SlimeCore.Controls.Keyboard.KEY} keyCode
-	 * @param  {Object}  flags
-	 * @return {Boolean}
+	 * @param  {(number|number[])} keyCode
+	 * @param  {object}            flags
+	 * @return {boolean}
 	 */
-	isDown( keyCode, flags ) {
-		var isPressed = ( typeof this._keyStateDown[keyCode] !== 'undefined' );
+	isPressed( keyCode, flags ) {
+		if( Array.isArray( keyCode ) ) {
+			for( let i = 0; i < keyCode.length; i++ ) {
+				if( this.isPressed( keyCode[i], flags ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		let isPressed = ( typeof this._keyStateDown[keyCode] !== 'undefined' );
 
 		if( flags && flags.forget ) {
 			this.deleteKeyState( keyCode );
@@ -94,12 +107,12 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 	/**
 	 * Check, if the key for moving down is pressed.
 	 * @override
-	 * @param  {Object}  flags
-	 * @return {Boolean}       True if pressed, false otherwise.
+	 * @param  {object} flags
+	 * @return {boolean} True if pressed, false otherwise.
 	 */
 	isPressedDown( flags ) {
-		var KEY = SlimeCore.Controls.Keyboard.KEY;
-		var isPressed = ( typeof this._keyStateDown[KEY.ARROW_DOWN] !== 'undefined' );
+		const KEY = SlimeCore.Controls.Keyboard.KEY;
+		let isPressed = ( typeof this._keyStateDown[KEY.ARROW_DOWN] !== 'undefined' );
 
 		if( flags && flags.forget ) {
 			this.deleteKeyState( KEY.ARROW_DOWN );
@@ -110,40 +123,14 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 
 
 	/**
-	 * Check, if the key for the given interaction is pressed.
-	 * @param  {SlimeCore.Controls.Controller.INTERACT} what
-	 * @param  {Object}                                 flags
-	 * @return {Boolean}                                      True if pressed, false otherwise.
-	 */
-	isPressedInteract( what, flags ) {
-		var KEY = SlimeCore.Controls.Keyboard.KEY;
-		var INTERACT = SlimeCore.Controls.Controller.INTERACT;
-
-		switch( what ) {
-			case INTERACT.DIALOG:
-				return this.isDown( KEY.NUM1, flags );
-
-			case INTERACT.SPECIAL:
-				return this.isDown( KEY.NUM2, flags );
-
-			case INTERACT.FIGHT:
-				return this.isDown( KEY.NUM3, flags );
-
-			case INTERACT.SELECT:
-				return this.isDown( KEY.NUM4, flags );
-		}
-	}
-
-
-	/**
 	 * Check, if the key for moving left is pressed.
 	 * @override
-	 * @param  {Object}  flags
-	 * @return {Boolean}       True if pressed, false otherwise.
+	 * @param  {object} flags
+	 * @return {boolean} True if pressed, false otherwise.
 	 */
 	isPressedLeft( flags ) {
-		var KEY = SlimeCore.Controls.Keyboard.KEY;
-		var isPressed = ( typeof this._keyStateDown[KEY.ARROW_LEFT] !== 'undefined' );
+		const KEY = SlimeCore.Controls.Keyboard.KEY;
+		let isPressed = ( typeof this._keyStateDown[KEY.ARROW_LEFT] !== 'undefined' );
 
 		if( flags && flags.forget ) {
 			this.deleteKeyState( KEY.ARROW_LEFT );
@@ -156,12 +143,12 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 	/**
 	 * Check, if the key for selecting the next option is pressed.
 	 * @override
-	 * @param  {Object}  flags
-	 * @return {Boolean}       True if pressed, false otherwise.
+	 * @param  {object} flags
+	 * @return {boolean} True if pressed, false otherwise.
 	 */
 	isPressedNext( flags ) {
-		var KEY = SlimeCore.Controls.Keyboard.KEY;
-		var isPressed = ( typeof this._keyStateDown[KEY.S] !== 'undefined' );
+		const KEY = SlimeCore.Controls.Keyboard.KEY;
+		let isPressed = ( typeof this._keyStateDown[KEY.S] !== 'undefined' );
 
 		if( flags && flags.forget ) {
 			this.deleteKeyState( KEY.S );
@@ -174,12 +161,12 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 	/**
 	 * Check, if the key for selecting the previous option is pressed.
 	 * @override
-	 * @param  {Object}  flags
-	 * @return {Boolean}       True if pressed, false otherwise.
+	 * @param  {object} flags
+	 * @return {boolean} True if pressed, false otherwise.
 	 */
 	isPressedPrevious( flags ) {
-		var KEY = SlimeCore.Controls.Keyboard.KEY;
-		var isPressed = ( typeof this._keyStateDown[KEY.W] !== 'undefined' );
+		const KEY = SlimeCore.Controls.Keyboard.KEY;
+		let isPressed = ( typeof this._keyStateDown[KEY.W] !== 'undefined' );
 
 		if( flags && flags.forget ) {
 			this.deleteKeyState( KEY.W );
@@ -192,12 +179,12 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 	/**
 	 * Check, if the key for moving right is pressed.
 	 * @override
-	 * @param  {Object}  flags
-	 * @return {Boolean}       True if pressed, false otherwise.
+	 * @param  {object} flags
+	 * @return {boolean} True if pressed, false otherwise.
 	 */
 	isPressedRight( flags ) {
-		var KEY = SlimeCore.Controls.Keyboard.KEY;
-		var isPressed = ( typeof this._keyStateDown[KEY.ARROW_RIGHT] !== 'undefined' );
+		const KEY = SlimeCore.Controls.Keyboard.KEY;
+		let isPressed = ( typeof this._keyStateDown[KEY.ARROW_RIGHT] !== 'undefined' );
 
 		if( flags && flags.forget ) {
 			this.deleteKeyState( KEY.ARROW_RIGHT );
@@ -210,12 +197,12 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 	/**
 	 * Check, if the key for selecting the option is pressed.
 	 * @override
-	 * @param  {Object}  flags
-	 * @return {Boolean}       True if pressed, false otherwise.
+	 * @param  {object} flags
+	 * @return {boolean} True if pressed, false otherwise.
 	 */
 	isPressedSelect( flags ) {
-		var KEY = SlimeCore.Controls.Keyboard.KEY;
-		var isPressed = ( typeof this._keyStateDown[KEY.E] !== 'undefined' );
+		const KEY = SlimeCore.Controls.Keyboard.KEY;
+		let isPressed = ( typeof this._keyStateDown[KEY.E] !== 'undefined' );
 
 		if( flags && flags.forget ) {
 			this.deleteKeyState( KEY.E );
@@ -228,12 +215,12 @@ class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 	/**
 	 * Check, if the key for moving up is pressed.
 	 * @override
-	 * @param  {Object}  flags
-	 * @return {Boolean}       True if pressed, false otherwise.
+	 * @param  {object} flags
+	 * @return {boolean} True if pressed, false otherwise.
 	 */
 	isPressedUp( flags ) {
-		var KEY = SlimeCore.Controls.Keyboard.KEY;
-		var isPressed = ( typeof this._keyStateDown[KEY.ARROW_UP] !== 'undefined' );
+		const KEY = SlimeCore.Controls.Keyboard.KEY;
+		let isPressed = ( typeof this._keyStateDown[KEY.ARROW_UP] !== 'undefined' );
 
 		if( flags && flags.forget ) {
 			this.deleteKeyState( KEY.ARROW_UP );

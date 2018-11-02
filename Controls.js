@@ -1,6 +1,9 @@
 'use strict';
 
 
+/**
+ * @namespace SlimeCore.Controls
+ */
 SlimeCore.Controls = {
 
 
@@ -13,13 +16,26 @@ SlimeCore.Controls = {
 	_keyboard: null,
 
 
+	mapping: {
+		gamepad: {},
+		keyboard: {}
+	},
+
+
+	TYPE: {
+		GAMEPAD: 1,
+		KEYBOARD: 2
+	},
+
+
 	/**
 	 * Handle gamepad events.
+	 * @private
 	 */
 	_handleGamepadEvents() {
 		// Gamepad connected.
 		window.addEventListener( 'gamepadconnected', ( ev ) => {
-			SlimeCore.log.info( '[SlimeCore.Controls._handleGamepadEvents]' +
+			SlimeCore.Log.log( '[SlimeCore.Controls._handleGamepadEvents]' +
 				` Gamepad ${ev.gamepad.index} connected.` );
 
 			this._gamepad[ev.gamepad.index] = new this.Gamepad( ev.gamepad );
@@ -27,11 +43,22 @@ SlimeCore.Controls = {
 
 		// Gamepad disconnected.
 		window.addEventListener( 'gamepaddisconnected', ( ev ) => {
-			SlimeCore.log.info( '[SlimeCore.Controls._handleGamepadEvents]' +
+			SlimeCore.Log.log( '[SlimeCore.Controls._handleGamepadEvents]' +
 				` Gamepad ${ev.gamepad.index} disconnected.` );
 
 			this._gamepad[ev.gamepad.index] = null;
 		} );
+	},
+
+
+	/**
+	 * Clear the mapping.
+	 */
+	clearMapping() {
+		this.mapping = {
+			gamepad: {},
+			keyboard: {}
+		};
 	},
 
 
@@ -61,7 +88,7 @@ SlimeCore.Controls = {
 
 	/**
 	 * Get the connected gamepads.
-	 * @return {Object}
+	 * @return {object}
 	 */
 	getGamepads() {
 		return this._gamepad;
@@ -74,10 +101,35 @@ SlimeCore.Controls = {
 	 */
 	getKeyboard() {
 		if( !this._keyboard ) {
-			this._keyboard = new this.Keyboard( 1 );
+			this._keyboard = new this.Keyboard();
 		}
 
 		return this._keyboard;
+	},
+
+
+	/**
+	 * Get the mapping for a key and control type. A
+	 * mapping can be a single key/button ID or an array
+	 * of those.
+	 * @param  {*}      key
+	 * @param  {number} controlType
+	 * @return {(number|number[]|undefined)}
+	 */
+	getMapping( key, controlType = null ) {
+		const TYPE = SlimeCore.Controls.TYPE;
+
+		if( !controlType ) {
+			let control = this.getActiveController();
+			controlType = control.type;
+		}
+
+		if( controlType === TYPE.GAMEPAD ) {
+			return this.mapping.gamepad[key];
+		}
+		else {
+			return this.mapping.keyboard[key];
+		}
 	},
 
 
@@ -98,17 +150,17 @@ SlimeCore.Controls = {
 	 * Update the gamepad states.
 	 */
 	updateGamepads() {
-		var gamepads = navigator.getGamepads();
+		let gamepads = navigator.getGamepads();
 
-		if( gamepads instanceof Array ) {
-			for( let i = 0; i < gamepads.length; i++ ) {
-				let gp = gamepads[i];
+		if( typeof gamepads === 'object' ) {
+			for( let index in gamepads ) {
+				let gp = gamepads[index];
 				this.updateGamepad( gp );
 			}
 		}
-		else { // instanceof Object
-			for( let index in gamepads ) {
-				let gp = gamepads[index];
+		else if( gamepads instanceof Array ) {
+			for( let i = 0; i < gamepads.length; i++ ) {
+				let gp = gamepads[i];
 				this.updateGamepad( gp );
 			}
 		}

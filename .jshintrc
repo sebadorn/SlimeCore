@@ -1,8 +1,11 @@
 {
 	"browser": true,
+	"curly": true,
 	"esversion": 6,
 	"expr": true,
 	"globals": {
+		"chrome": false,
+		"nw": false,
 		"PIXI": false,
 		"SlimeCore": true,
 		"THREE": false
