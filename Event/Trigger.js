@@ -61,6 +61,8 @@ class SlimeCore_Event_Trigger {
 		const tp = params.typeParams;
 
 		if( this._type === TYPE.AREA ) {
+			const FORM = SlimeCore_Event_Trigger.FORM;
+
 			this._typeParams = {
 				// [px] - left of square/center of circle
 				x: 0,
@@ -88,7 +90,7 @@ class SlimeCore_Event_Trigger {
 				this._typeParams.r = tp.r;
 			}
 
-			if( tp.form === 'circle' || tp.form === 'square' ) {
+			if( tp.form === FORM.CIRCLE || tp.form === FORM.SQUARE ) {
 				this._typeParams.form = tp.form;
 			}
 		}
@@ -125,6 +127,7 @@ class SlimeCore_Event_Trigger {
 	 * @return {object} The axis-aligned bounding box of the trigger.
 	 */
 	calculateBoundingBox() {
+		const FORM = SlimeCore_Event_Trigger.FORM;
 		const TYPE = SlimeCore_Event_Trigger.TYPE;
 		const tp = this._typeParams;
 
@@ -134,12 +137,12 @@ class SlimeCore_Event_Trigger {
 		// Type: Area.
 		if( this._type === TYPE.AREA ) {
 			// Form: Square.
-			if( tp.form === 'square' ) {
+			if( tp.form === FORM.SQUARE ) {
 				this.aabb.w = tp.w;
 				this.aabb.h = tp.h;
 			}
 			// Form: Circle.
-			else if( tp.form === 'circle' ) {
+			else if( tp.form === FORM.CIRCLE ) {
 				this.aabb.w = tp.r * 2;
 				this.aabb.h = this.aabb.w;
 
@@ -244,6 +247,11 @@ class SlimeCore_Event_Trigger {
 
 }
 
+
+SlimeCore_Event_Trigger.FORM = {
+	CIRCLE: 1,
+	SQUARE: 2
+};
 
 SlimeCore_Event_Trigger.TYPE = {
 	AREA: 1,
