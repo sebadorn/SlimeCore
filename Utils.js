@@ -58,6 +58,17 @@ SlimeCore.Utils = {
 
 
 	/**
+	 * Check if the given value is a number and not only by type.
+	 * NOTE: "NaN" (Not-a-Number) is of type "number".
+	 * @param  {*} n
+	 * @return {boolean}
+	 */
+	isNumber( n ) {
+		return ( typeof n === 'number' && !isNaN( n ) );
+	},
+
+
+	/**
 	 * Check if the given value is an object and not null.
 	 * @param  {*} o
 	 * @return {boolean}

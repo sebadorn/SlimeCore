@@ -45,15 +45,17 @@ class SlimeCore_Event_Trigger {
 	 * @param {object}  params.typeParams
 	 */
 	_setParams( params ) {
-		if( !SlimeCore.Utils.isObject( params ) ) {
+		const Utils = SlimeCore.Utils;
+
+		if( !Utils.isObject( params ) ) {
 			params = {};
 		}
 
-		if( !SlimeCore.Utils.isObject( params.typeParams ) ) {
+		if( !Utils.isObject( params.typeParams ) ) {
 			params.typeParams = {};
 		}
 
-		if( typeof params.cooldown === 'number' && params.cooldown > 0 ) {
+		if( Utils.isNumber( params.cooldown ) && params.cooldown > 0 ) {
 			this.cooldown = params.cooldown;
 		}
 
@@ -75,18 +77,18 @@ class SlimeCore_Event_Trigger {
 				// [px] - circle
 				r: 0,
 				// "square" or "circle"
-				form: 'square'
+				form: FORM.SQUARE
 			};
 
-			if( typeof tp.w === 'number' && !isNaN( tp.w ) ) {
+			if( Utils.isNumber( tp.w ) ) {
 				this._typeParams.w = tp.w;
 			}
 
-			if( typeof tp.h === 'number' && !isNaN( tp.h ) ) {
+			if( Utils.isNumber( tp.h ) ) {
 				this._typeParams.h = tp.h;
 			}
 
-			if( typeof tp.r === 'number' && !isNaN( tp.r ) ) {
+			if( Utils.isNumber( tp.r ) ) {
 				this._typeParams.r = tp.r;
 			}
 
@@ -104,7 +106,7 @@ class SlimeCore_Event_Trigger {
 				distance: 0
 			};
 
-			if( typeof tp.distance === 'number' && !isNaN( tp.distance ) ) {
+			if( Utils.isNumber( tp.distance ) ) {
 				this._typeParams.distance = tp.distance;
 			}
 		}
@@ -112,11 +114,11 @@ class SlimeCore_Event_Trigger {
 
 		// The same for all types.
 
-		if( typeof tp.x === 'number' && !isNaN( tp.x ) ) {
+		if( Utils.isNumber( tp.x ) ) {
 			this._typeParams.x = tp.x;
 		}
 
-		if( typeof tp.y === 'number' && !isNaN( tp.y ) ) {
+		if( Utils.isNumber( tp.y ) ) {
 			this._typeParams.y = tp.y;
 		}
 	}

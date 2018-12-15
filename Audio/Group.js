@@ -128,7 +128,7 @@ class SlimeCore_Audio_Group {
 
 		let duration = 0;
 
-		if( typeof params.duration === 'number' && !isNaN( params.duration ) ) {
+		if( SlimeCore.Utils.isNumber( params.duration ) ) {
 			duration = params.duration;
 		}
 

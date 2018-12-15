@@ -112,7 +112,9 @@ class SlimeCore_FontLoader {
 			timeout: null
 		};
 
-		if( !SlimeCore.Utils.isObject( options ) ) {
+		const Utils = SlimeCore.Utils;
+
+		if( !Utils.isObject( options ) ) {
 			return;
 		}
 
@@ -124,7 +126,7 @@ class SlimeCore_FontLoader {
 			this._options.cssClass = options.cssClass;
 		}
 
-		if( typeof options.timeout === 'number' ) {
+		if( Utils.isNumber( options.timeout ) ) {
 			this._options.timeout = options.timeout;
 		}
 	}
