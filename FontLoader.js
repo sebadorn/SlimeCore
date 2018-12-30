@@ -137,12 +137,21 @@ class SlimeCore_FontLoader {
 	 * @param {function} cb - Callback.
 	 */
 	waitForLoadingDone( cb ) {
+		let hasFired = false;
 		let node = this._createHTML();
 		this._options.container.appendChild( node );
 
 		let timeout = this._setLoadTimeout( cb );
 
 		document.fonts.onloadingdone = ( fontFaceSetEvent ) => {
+			if( hasFired ) {
+				SlimeCore.Log.warn( '[SlimeCore.FontLoader.load]' +
+					' Event "onloadingdone" has already been fired.' );
+				return;
+			}
+
+			hasFired = true;
+
 			if( this._timedOut ) {
 				SlimeCore.Log.warn( '[SlimeCore.FontLoader.load] Event "onloadingdone" fired,' +
 					' but listener already timed out.' );

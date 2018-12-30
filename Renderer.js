@@ -7,13 +7,34 @@ class SlimeCore_Renderer {
 
 
 	/**
+	 * Get the current background color.
+	 * @return {(number|string)}
+	 */
+	get backgroundColor() {
+		throw new Error( '[SlimeCore.Renderer.backgroundColor]' +
+			' Getter not implemented by extending class.' );
+	}
+
+
+	/**
+	 * Set a background color.
+	 * @param  {(number|string)} color - The color to use.
+	 * @return {(number|string)} The new background color.
+	 */
+	set backgroundColor( color ) {
+		throw new Error( '[SlimeCore.Renderer.backgroundColor]' +
+			' Setter not implemented by extending class.' );
+	}
+
+
+	/**
 	 * Get the renderer height.
 	 * @return {number}
 	 * @throws {Error}
 	 */
 	get height() {
 		throw new Error( '[SlimeCore.Renderer.height]' +
-			' Not implemented by extending class.' );
+			' Getter not implemented by extending class.' );
 	}
 
 
@@ -24,7 +45,7 @@ class SlimeCore_Renderer {
 	 */
 	get width() {
 		throw new Error( '[SlimeCore.Renderer.width]' +
-			' Not implemented by extending class.' );
+			' Getter not implemented by extending class.' );
 	}
 
 

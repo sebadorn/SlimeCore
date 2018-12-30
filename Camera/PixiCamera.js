@@ -21,6 +21,9 @@ class SlimeCore_PixiCamera extends SlimeCore.Camera {
 		this._height = 0;
 		this._width = 0;
 
+		this._halfHeight = 0;
+		this._halfWidth = 0;
+
 		this._stage = null;
 	}
 
@@ -78,38 +81,78 @@ class SlimeCore_PixiCamera extends SlimeCore.Camera {
 	 * Apply the camera settings on the stage.
 	 */
 	apply() {
-		let x = this._applyX;
-		let y = this._applyY;
-
-		this._stage.position.set( x, y );
+		this._stage.position.set( this._applyX, this._applyY );
 	}
 
 
 	/**
 	 * Center the stage on the given PIXI object.
 	 * @param {PIXI.DisplayObject} thing
-	 * @param {number}             offsetX
-	 * @param {number}             offsetY
+	 * @param {number}            [offsetX = 0]
+	 * @param {number}            [offsetY = 0]
 	 */
 	centerOn( thing, offsetX = 0, offsetY = 0 ) {
-		this._applyX = ( this._width - thing.width ) * 0.5 - thing.position.x + offsetX;
-		this._applyY = ( this._height - thing.height ) * 0.5 - thing.position.y + offsetY;
+		let relX = thing.position.x;
+		let relY = thing.position.y;
+		let relW = thing.width;
+		let relH = thing.height;
+		let targetHalfW = relW * 0.5;
+		let targetHalfH = relH * 0.5;
 
-		this._applyX += this._global.offsetX;
-		this._applyY += this._global.offsetY;
+		// Limit the view to the given bounds.
+
+		const bounds = this._global.bounds;
+
+		if( typeof bounds.left === 'number' ) {
+			if( bounds.left + this._halfWidth > relX + targetHalfW ) {
+				relX = bounds.left + this._halfWidth;
+				targetHalfW = 0;
+			}
+		}
+
+		if( typeof bounds.right === 'number' ) {
+			if( bounds.right - this._halfWidth < relX + targetHalfW ) {
+				relX = bounds.right - this._halfWidth;
+				targetHalfW = 0;
+			}
+		}
+
+		if( typeof bounds.top === 'number' ) {
+			if( bounds.top + this._halfHeight > relY + targetHalfH ) {
+				relY = bounds.top + this._halfHeight;
+				targetHalfH = 0;
+			}
+		}
+
+		if( typeof bounds.bottom === 'number' ) {
+			if( bounds.bottom - this._halfHeight < relY + targetHalfH ) {
+				relY = bounds.bottom - this._halfHeight;
+				targetHalfH = 0;
+			}
+		}
+
+		this._applyX = this._halfWidth - targetHalfW - relX;
+		this._applyY = this._halfHeight - targetHalfH - relY;
+
+		this._applyX += offsetX + this._global.offsetX;
+		this._applyY += offsetY + this._global.offsetY;
 	}
 
 
 	/**
 	 * Set the stage to set the position of and apply effects to.
 	 * @param {PIXI.DisplayObject} stage
-	 * @param {number} width  - Viewport width.
-	 * @param {number} height - Viewport height.
+	 * @param {number}             width  - Viewport width.
+	 * @param {number}             height - Viewport height.
 	 */
 	setStage( stage, width, height ) {
-		this._height = height;
 		this._stage = stage;
+
+		this._height = height;
 		this._width = width;
+
+		this._halfHeight = height * 0.5;
+		this._halfWidth = width * 0.5;
 	}
 
 

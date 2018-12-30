@@ -12,6 +12,7 @@ class SlimeCore_Camera {
 	 */
 	constructor( cfg ) {
 		this._global = {
+			bounds: {},
 			offsetX: 0,
 			offsetY: 0
 		};
@@ -24,14 +25,14 @@ class SlimeCore_Camera {
 
 	/**
 	 * Add a top and bottom border, for example for a cutscene.
-	 * @param {object}   args           - Options for the effect.
-	 * @param {number}   args.color     - Color of the borders. [0x000000, 0xFFFFFF]
-	 * @param {number}   args.duration  - How long the borders stay in [ms].
+	 * @param {object}   args          - Options for the effect.
+	 * @param {number}   args.color    - Color of the borders. [0x000000, 0xFFFFFF]
+	 * @param {number}   args.duration - How long the borders stay in [ms].
 	 *     Does not including slide in/out animation time.
-	 * @param {number}   args.height    - Height of each border. [px]
-	 * @param {number}   args.slideIn   - How long the slide in animation takes. [ms]
-	 * @param {number}   args.slideOut  - How long the slide out animation takes. [ms]
-	 * @param {function} cb             - Callback when the effect is done.
+	 * @param {number}   args.height   - Height of each border. [px]
+	 * @param {number}   args.slideIn  - How long the slide in animation takes. [ms]
+	 * @param {number}   args.slideOut - How long the slide out animation takes. [ms]
+	 * @param {function} cb            - Callback when the effect is done.
 	 *     Will not be called if duration is <= 0.
 	 */
 	addBorders( args, cb ) {
@@ -81,18 +82,50 @@ class SlimeCore_Camera {
 	/**
 	 * Set the config.
 	 * @param {object}  cfg
+	 * @param {?object} cfg.bounds
+	 * @param {?number} cfg.bounds.bottom
+	 * @param {?number} cfg.bounds.left
+	 * @param {?number} cfg.bounds.right
+	 * @param {?number} cfg.bounds.top
 	 * @param {?number} cfg.offsetX
 	 * @param {?number} cfg.offsetY
 	 */
 	configure( cfg ) {
 		const Utils = SlimeCore.Utils;
 
-		if( Utils.isNumber( cfg.offsetX ) ) {
-			this._global.offsetX = cfg.offsetX;
+		let numbers = [
+			'offsetX',
+			'offsetY'
+		];
+
+		for( let i = 0; i < numbers.length; i++ ) {
+			let attr = numbers[i];
+			let val = cfg[attr];
+
+			if( Utils.isNumber( val ) ) {
+				this._global[attr] = val;
+			}
 		}
 
-		if( Utils.isNumber( cfg.offsetY ) ) {
-			this._global.offsetY = cfg.offsetY;
+		if( Utils.isObject( cfg.bounds ) ) {
+			let b = [
+				'bottom',
+				'left',
+				'right',
+				'top'
+			];
+
+			for( let i = 0; i < b.length; i++ ) {
+				let attr = b[i];
+				let val = cfg.bounds[attr];
+
+				if( Utils.isNumber( val ) ) {
+					this._global.bounds[attr] = val;
+				}
+				else {
+					delete this._global.bounds[attr];
+				}
+			}
 		}
 	}
 

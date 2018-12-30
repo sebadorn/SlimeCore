@@ -18,19 +18,21 @@ class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
 	constructor( w, h, options ) {
 		super();
 
-		if( !SlimeCore.Utils.isObject( options ) ) {
+		const Utils = SlimeCore.Utils;
+
+		if( !Utils.isObject( options ) ) {
 			options = {};
 		}
 
-		if( typeof options.resolution !== 'number' ) {
+		if( !Utils.isNumber( options.resolution ) ) {
 			options.resolution = window.devicePixelRatio;
 		}
 
-		if( typeof w !== 'number' ) {
+		if( !Utils.isNumber( w ) ) {
 			w = window.innerWidth;
 		}
 
-		if( typeof h !== 'number' ) {
+		if( !Utils.isNumber( h ) ) {
 			h = window.innerHeight;
 		}
 
@@ -44,6 +46,41 @@ class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
 		this.ticker = PIXI.ticker.shared;
 		this.ticker.autoStart = false;
 		this.ticker.stop();
+
+		// Set a variable to the mainLoop() function with
+		// the context set to this class. Otherwise
+		// with "mainLoop.bind( this )" used in the main
+		// loop itself, a new function would have been
+		// created for each frame.
+		this._fnMainLoopContextThis = this.mainLoop.bind( this );
+	}
+
+
+	/**
+	 * Get the current background color.
+	 * @return {number}
+	 */
+	get backgroundColor() {
+		return this.renderer.backgroundColor;
+	}
+
+
+	/**
+	 * Set a background color.
+	 * @param  {number} color - The color to use.
+	 * @return {number} The new background color.
+	 */
+	set backgroundColor( color ) {
+		// Only actually does something if the PIXI.SystemRenderer
+		// is not in transparent mode. Otherwise
+		// this only a way to remember the current color.
+		this.renderer.backgroundColor = color;
+
+		if( this.renderer.transparent ) {
+			this.renderer.view.style.backgroundColor = '#' + color.toString( 16 );
+		}
+
+		return this.backgroundColor;
 	}
 
 
@@ -79,7 +116,7 @@ class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
 		let displayObject = this.update( this.ticker.deltaTime );
 		this.renderer.render( displayObject );
 
-		this._frameRequest = requestAnimationFrame( this.mainLoop.bind( this ) );
+		this._frameRequest = requestAnimationFrame( this._fnMainLoopContextThis );
 	}
 
 
@@ -102,7 +139,7 @@ class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
 	start() {
 		if( this._isRunning === false ) {
 			this._isRunning = true;
-			this._frameRequest = requestAnimationFrame( this.mainLoop.bind( this ) );
+			this._frameRequest = requestAnimationFrame( this._fnMainLoopContextThis );
 		}
 	}
 
