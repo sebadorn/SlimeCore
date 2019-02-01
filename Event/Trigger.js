@@ -18,6 +18,7 @@ class SlimeCore_Event_Trigger {
 		this._type = type;
 		this._typeParams = {};
 
+		this._insideRefs = [];
 		this._handlersOn = {};
 		this._handlersOnce = {};
 
@@ -63,21 +64,21 @@ class SlimeCore_Event_Trigger {
 		const tp = params.typeParams;
 
 		if( this._type === TYPE.AREA ) {
-			const FORM = SlimeCore_Event_Trigger.FORM;
+			const SHAPE = SlimeCore_Event_Trigger.SHAPE;
 
 			this._typeParams = {
-				// [px] - left of square/center of circle
+				// [px] - left of rectangle/center of circle
 				x: 0,
-				// [px] - top of square/center of circle
+				// [px] - top of rectangle/center of circle
 				y: 0,
-				// [px] - square
+				// [px] - rectangle
 				w: 0,
-				// [px] - square
+				// [px] - rectangle
 				h: 0,
 				// [px] - circle
 				r: 0,
-				// "square" or "circle"
-				form: FORM.SQUARE
+				// "rectangle" or "circle"
+				shape: SHAPE.RECTANGLE
 			};
 
 			if( Utils.isNumber( tp.w ) ) {
@@ -92,8 +93,8 @@ class SlimeCore_Event_Trigger {
 				this._typeParams.r = tp.r;
 			}
 
-			if( tp.form === FORM.CIRCLE || tp.form === FORM.SQUARE ) {
-				this._typeParams.form = tp.form;
+			if( tp.shape === SHAPE.CIRCLE || tp.shape === SHAPE.RECTANGLE ) {
+				this._typeParams.shape = tp.shape;
 			}
 		}
 		else if( this._type === TYPE.DISTANCE ) {
@@ -129,7 +130,7 @@ class SlimeCore_Event_Trigger {
 	 * @return {object} The axis-aligned bounding box of the trigger.
 	 */
 	calculateBoundingBox() {
-		const FORM = SlimeCore_Event_Trigger.FORM;
+		const SHAPE = SlimeCore_Event_Trigger.SHAPE;
 		const TYPE = SlimeCore_Event_Trigger.TYPE;
 		const tp = this._typeParams;
 
@@ -138,13 +139,13 @@ class SlimeCore_Event_Trigger {
 
 		// Type: Area.
 		if( this._type === TYPE.AREA ) {
-			// Form: Square.
-			if( tp.form === FORM.SQUARE ) {
+			// Shape: Rectangle.
+			if( tp.shape === SHAPE.RECTANGLE ) {
 				this.aabb.w = tp.w;
 				this.aabb.h = tp.h;
 			}
-			// Form: Circle.
-			else if( tp.form === FORM.CIRCLE ) {
+			// Shape: Circle.
+			else if( tp.shape === SHAPE.CIRCLE ) {
 				this.aabb.w = tp.r * 2;
 				this.aabb.h = this.aabb.w;
 
@@ -160,20 +161,110 @@ class SlimeCore_Event_Trigger {
 	/**
 	 * Check the trigger against an object and
 	 * fire all applicable events.
-	 * @param {object} aabb
-	 * @param {number} aabb.x
-	 * @param {number} aabb.y
-	 * @param {number} aabb.w
-	 * @param {number} aabb.h
+	 * @param  {object}  aabb   - Axis-aligned bounding box.
+	 * @param  {number}  aabb.x - X coordinate.
+	 * @param  {number}  aabb.y - Y coordinate.
+	 * @param  {number}  aabb.w - Width.
+	 * @param  {number}  aabb.h - Height.
+	 * @param  {?object} ref    - Object reference of the thing being checked.
+	 *     Used for comparisons to determine which events to fire.
+	 * @return {boolean} True if the AABB is inside the trigger, false otherwise.
 	 */
-	check( aabb ) {
+	check( aabb, ref ) {
 		const TYPE = SlimeCore_Event_Trigger.TYPE;
+		let isInside = false;
+		let refIndex = this._insideRefs.indexOf( ref );
 
 		if( this._type === TYPE.AREA ) {
-			// TODO:
+			const SHAPE = SlimeCore_Event_Trigger.SHAPE;
+
+			if( this._typeParams.shape === SHAPE.RECTANGLE ) {
+				isInside = SlimeCore.Math.overlapAABBWithAABB( this.aabb, aabb );
+			}
+			else if( this._typeParams.shape === SHAPE.CIRCLE ) {
+				isInside = SlimeCore.Math.overlapAABBWithCircle( aabb, this._typeParams );
+			}
 		}
 		else if( this._type === TYPE.DISTANCE ) {
-			// TODO:
+			let x = this._typeParams.x;
+			let y = this._typeParams.y;
+			let distX = Math.min( x - aabb.x - aabb.w, aabb.x - x );
+			let distY = Math.min( y - aabb.y - aabb.h, aabb.y - y );
+			let euclidean = Math.sqrt( distX * distX + distY * distY );
+
+			isInside = ( euclidean <= this._typeParams.distance );
+		}
+
+		// Object is inside trigger area.
+		if( isInside ) {
+			// Object wasn't inside before. -> "enter"
+			if( refIndex < 0 ) {
+				if( ref ) {
+					this._insideRefs.push( ref );
+				}
+
+				this.fire( 'enter', ref );
+			}
+			// Object is already inside. -> "stay"
+			else {
+				this.fire( 'stay', ref );
+			}
+		}
+		// Object is not inside trigger area.
+		else {
+			// Object was inside before. -> "leave"
+			if( refIndex >= 0 ) {
+				this._insideRefs.splice( refIndex, 1 );
+				this.fire( 'leave', ref );
+			}
+		}
+
+		return isInside;
+	}
+
+
+	/**
+	 * Fire an event for this trigger.
+	 * @param {string}  eventType
+	 * @param {?object} ref
+	 */
+	fire( eventType, ref ) {
+		let ev = new Event( eventType, { cancelable: true } );
+		ev.sc_trigger = this;
+		ev.sc_reference = ref;
+
+		if( this._handlersOn[eventType] ) {
+			let list = this._handlersOn[eventType];
+
+			for( let i = 0; i < list.length; i++ ) {
+				if( ev.defaultPrevented ) {
+					break;
+				}
+
+				let cb = list[i];
+				cb( ev );
+			}
+		}
+
+		if( this._handlersOnce[eventType] ) {
+			let list = this._handlersOnce[eventType];
+			let remove = [];
+
+			for( let i = 0; i < list.length; i++ ) {
+				if( ev.defaultPrevented ) {
+					break;
+				}
+
+				remove.push( i );
+
+				let cb = list[i];
+				cb( ev );
+			}
+
+			for( let i = remove.length - 1; i >= 0; i-- ) {
+				let index = remove[i];
+				list.splice( index, 1 );
+			}
 		}
 	}
 
@@ -250,9 +341,9 @@ class SlimeCore_Event_Trigger {
 }
 
 
-SlimeCore_Event_Trigger.FORM = {
+SlimeCore_Event_Trigger.SHAPE = {
 	CIRCLE: 1,
-	SQUARE: 2
+	RECTANGLE: 2
 };
 
 SlimeCore_Event_Trigger.TYPE = {

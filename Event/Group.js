@@ -65,16 +65,18 @@ class SlimeCore_Event_Group {
 
 	/**
 	 * Check if an object fulfills the condition of a trigger.
-	 * @param {object} aabb
-	 * @param {number} aabb.x
-	 * @param {number} aabb.y
-	 * @param {number} aabb.w
-	 * @param {number} aabb.h
+	 * @param {object}  aabb   - Axis-aligned bounding box.
+	 * @param {number}  aabb.x - X coordinate.
+	 * @param {number}  aabb.y - Y coordinate.
+	 * @param {number}  aabb.w - Width.
+	 * @param {number}  aabb.h - Height.
+	 * @param {?object} ref    - Object reference of the thing being checked.
+	 *     Used for comparisons to determine which events to fire.
 	 */
-	checkTriggers( aabb ) {
+	checkTriggers( aabb, ref ) {
 		for( let i = 0; i < this._triggers.length; i++ ) {
 			let trigger = this._triggers[i];
-			trigger.check( aabb );
+			trigger.check( aabb, ref );
 		}
 	}
 
@@ -109,6 +111,15 @@ class SlimeCore_Event_Group {
 
 
 	/**
+	 * Get the triggers of the group.
+	 * @return {SlimeCore.Event.Trigger[]}
+	 */
+	getTriggers() {
+		return this._triggers.slice( 0 );
+	}
+
+
+	/**
 	 * Check if the group's AABB overlaps with a given AABB.
 	 * @param  {object} aabb   - Axis-aligned bounding box.
 	 * @param  {number} aabb.h - Height.
@@ -118,13 +129,7 @@ class SlimeCore_Event_Group {
 	 * @return {boolean} True if overlap, false otherwise.
 	 */
 	overlapsWith( aabb ) {
-		let overlapX = Math.min( this.aabb.x + this.aabb.w, aabb.x + aabb.w ) - Math.max( this.aabb.x, aabb.x );
-		overlapX = ( overlapX < 0 ) ? 0 : overlapX;
-
-		let overlapY = Math.min( this.aabb.y + this.aabb.h, aabb.y + aabb.h ) - Math.max( this.aabb.y, aabb.y );
-		overlapY = ( overlapY < 0 ) ? 0 : overlapY;
-
-		return ( overlapX * overlapY > 0 );
+		return SlimeCore.Math.overlapAABBWithAABB( aabb, this.aabb );
 	}
 
 

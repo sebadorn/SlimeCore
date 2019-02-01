@@ -1,6 +1,12 @@
 'use strict';
 
 
+{
+
+const fs = require( 'fs' );
+const path = require( 'path' );
+
+
 /**
  * @namespace SlimeCore.Log
  */
@@ -40,8 +46,6 @@ SlimeCore.Log = {
 		if( !this._outPath ) {
 			return;
 		}
-
-		const fs = require( 'fs' );
 
 		if( !this._writeStream ) {
 			try {
@@ -92,8 +96,6 @@ SlimeCore.Log = {
 	 * @private
 	 */
 	_startNewLogFile() {
-		const fs = require( 'fs' );
-
 		console.log( '[SlimeCore.Log._startNewLogFile] Starting new log file.' );
 
 		if( this._writeStream ) {
@@ -205,7 +207,6 @@ SlimeCore.Log = {
 	 *     otherwise null if an error occured.
 	 */
 	setLogDir( out ) {
-		const fs = require( 'fs' );
 		let stats = null;
 
 		this._outPath = null;
@@ -226,34 +227,36 @@ SlimeCore.Log = {
 			return null;
 		}
 
-		const path = require( 'path' );
 		out = path.join( out, nw.App.manifest.name + '.log' );
 
-		if( fs.existsSync( out ) ) {
-			let logStats = null;
+		if( !fs.existsSync( out ) ) {
+			let fd = fs.openSync( out, 'w' );
+			fs.closeSync( fd );
+		}
 
-			try {
-				logStats = fs.statSync( out );
+		let logStats = null;
 
-				if( logStats.size >= this.MAX_FILE_SIZE ) {
-					this.log( '[SlimeCore.Log.setLogDir] Max file size reached.' );
+		try {
+			logStats = fs.statSync( out );
 
-					let old = out + '.old';
+			if( logStats.size >= this.MAX_FILE_SIZE ) {
+				this.log( '[SlimeCore.Log.setLogDir] Max file size reached.' );
 
-					// Remove previous old log file.
-					if( fs.existsSync( old ) ) {
-						fs.unlinkSync( old );
-					}
+				let old = out + '.old';
 
-					// Rename current log file to old one.
-					fs.renameSync( out, old );
+				// Remove previous old log file.
+				if( fs.existsSync( old ) ) {
+					fs.unlinkSync( old );
 				}
-			}
-			catch( err ) {
-				this.error( `[SlimeCore.Log.setFilePath] ${err.message}` );
 
-				return null;
+				// Rename current log file to old one.
+				fs.renameSync( out, old );
 			}
+		}
+		catch( err ) {
+			this.error( `[SlimeCore.Log.setFilePath] ${err.message}` );
+
+			return null;
 		}
 
 		this._outPath = out;
@@ -272,3 +275,5 @@ SlimeCore.Log = {
 
 
 };
+
+}
