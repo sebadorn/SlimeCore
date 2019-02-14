@@ -12,6 +12,7 @@ class SlimeCore_Event_Group {
 	 */
 	constructor() {
 		this._triggers = [];
+		this._triggersWithLeaveEvent = null;
 
 		this.aabb = {
 			x: -Infinity,
@@ -24,11 +25,23 @@ class SlimeCore_Event_Group {
 
 	/**
 	 * Add a trigger to the group.
-	 * @param {SlimeCore.Event.Trigger} trigger
+	 * @param  {SlimeCore.Event.Trigger} trigger
+	 * @throws {Error} If trigger argument is not an instance of SlimeCore.Event.Trigger.
 	 */
 	add( trigger ) {
 		if( trigger instanceof SlimeCore.Event.Trigger ) {
 			this._triggers.push( trigger );
+
+			if( trigger.group ) {
+				trigger.group.remove( trigger );
+			}
+
+			trigger.group = this;
+
+			if( trigger.hasLeaveEventListener() ) {
+				this.registerLeaveEventTrigger( trigger );
+			}
+
 			this.extendBoundingBox( trigger );
 		}
 		else {
@@ -60,6 +73,30 @@ class SlimeCore_Event_Group {
 		this.aabb.h = maxY - this.aabb.y;
 
 		return this.aabb;
+	}
+
+
+	/**
+	 * Check first if the hitbox is inside the group,
+	 * and if so, check the triggers inside.
+	 * @param {object}  aabb   - Axis-aligned bounding box.
+	 * @param {number}  aabb.x - X coordinate.
+	 * @param {number}  aabb.y - Y coordinate.
+	 * @param {number}  aabb.w - Width.
+	 * @param {number}  aabb.h - Height.
+	 * @param {?object} ref    - Object reference of the thing being checked.
+	 *     Used for comparisons to determine which events to fire.
+	 */
+	check( aabb, ref ) {
+		if( this.overlapsWith( aabb ) ) {
+			this.checkTriggers( aabb, ref );
+		}
+		else if( this._triggersWithLeaveEvent ) {
+			for( let i = 0; i < this._triggersWithLeaveEvent.length; i++ ) {
+				let trigger = this._triggersWithLeaveEvent[i];
+				trigger.fireEventIfReferenceHasLeft( ref );
+			}
+		}
 	}
 
 
@@ -130,6 +167,51 @@ class SlimeCore_Event_Group {
 	 */
 	overlapsWith( aabb ) {
 		return SlimeCore.Math.overlapAABBWithAABB( aabb, this.aabb );
+	}
+
+
+	/**
+	 *
+	 * @param {SlimeCore.Event.Trigger} trigger
+	 */
+	registerLeaveEventTrigger( trigger ) {
+		this._triggersWithLeaveEvent = this._triggersWithLeaveEvent || [];
+
+		if( this._triggersWithLeaveEvent.indexOf( trigger ) < 0 ) {
+			this._triggersWithLeaveEvent.push( trigger );
+		}
+	}
+
+
+	/**
+	 * Remove a trigger from the group.
+	 * @param {SlimeCore.Event.Trigger} trigger
+	 */
+	remove( trigger ) {
+		let index = this._triggers.indexOf( trigger );
+
+		if( index >= 0 ) {
+			this._triggers.splice( index, 1 );
+			this.unregisterLeaveEventTrigger( trigger );
+			this.calculateBoundingBox();
+		}
+	}
+
+
+	/**
+	 *
+	 * @param {SlimeCore.Event.Trigger} trigger
+	 */
+	unregisterLeaveEventTrigger( trigger ) {
+		if( !this._triggersWithLeaveEvent ) {
+			return;
+		}
+
+		let index = this._triggersWithLeaveEvent.indexOf( trigger );
+
+		if( index >= 0 ) {
+			this._triggersWithLeaveEvent.splice( index, 1 );
+		}
 	}
 
 

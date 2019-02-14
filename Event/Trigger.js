@@ -23,6 +23,7 @@ class SlimeCore_Event_Trigger {
 		this._handlersOnce = {};
 
 		this.cooldown = 0;
+		this.group = null;
 		this.isEnabled = true;
 
 		this._setParams( params );
@@ -171,7 +172,9 @@ class SlimeCore_Event_Trigger {
 	 * @return {boolean} True if the AABB is inside the trigger, false otherwise.
 	 */
 	check( aabb, ref ) {
+		const EVENT = SlimeCore_Event_Trigger.EVENT;
 		const TYPE = SlimeCore_Event_Trigger.TYPE;
+
 		let isInside = false;
 		let refIndex = this._insideRefs.indexOf( ref );
 
@@ -203,11 +206,11 @@ class SlimeCore_Event_Trigger {
 					this._insideRefs.push( ref );
 				}
 
-				this.fire( 'enter', ref );
+				this.fire( EVENT.ENTER, ref );
 			}
 			// Object is already inside. -> "stay"
 			else {
-				this.fire( 'stay', ref );
+				this.fire( EVENT.STAY, ref );
 			}
 		}
 		// Object is not inside trigger area.
@@ -215,7 +218,7 @@ class SlimeCore_Event_Trigger {
 			// Object was inside before. -> "leave"
 			if( refIndex >= 0 ) {
 				this._insideRefs.splice( refIndex, 1 );
-				this.fire( 'leave', ref );
+				this.fire( EVENT.LEAVE, ref );
 			}
 		}
 
@@ -229,43 +232,92 @@ class SlimeCore_Event_Trigger {
 	 * @param {?object} ref
 	 */
 	fire( eventType, ref ) {
+		const EVENT = SlimeCore_Event_Trigger.EVENT;
+
 		let ev = new Event( eventType, { cancelable: true } );
 		ev.sc_trigger = this;
 		ev.sc_reference = ref;
 
-		if( this._handlersOn[eventType] ) {
-			let list = this._handlersOn[eventType];
+		let listOn = this._handlersOn[eventType];
+		let listOnce = this._handlersOnce[eventType];
 
-			for( let i = 0; i < list.length; i++ ) {
+		if( listOn ) {
+			for( let i = 0; i < listOn.length; i++ ) {
 				if( ev.defaultPrevented ) {
 					break;
 				}
 
-				let cb = list[i];
+				let cb = listOn[i];
 				cb( ev );
 			}
 		}
 
-		if( this._handlersOnce[eventType] ) {
-			let list = this._handlersOnce[eventType];
+		if( listOnce ) {
 			let remove = [];
 
-			for( let i = 0; i < list.length; i++ ) {
+			for( let i = 0; i < listOnce.length; i++ ) {
 				if( ev.defaultPrevented ) {
 					break;
 				}
 
 				remove.push( i );
 
-				let cb = list[i];
+				let cb = listOnce[i];
 				cb( ev );
 			}
 
 			for( let i = remove.length - 1; i >= 0; i-- ) {
 				let index = remove[i];
-				list.splice( index, 1 );
+				listOnce.splice( index, 1 );
 			}
 		}
+
+		if(
+			eventType === EVENT.LEAVE &&
+			this.group &&
+			!listOn.length &&
+			!listOnce.length
+		) {
+			this.group.unregisterLeaveEventTrigger( this );
+		}
+	}
+
+
+	/**
+	 * Check if a reference which is outside the trigger now, was
+	 * inside before. Fire the "leave" event if that is the case.
+	 * No hitbox check is performed.
+	 * @param  {?object} ref - Object reference of the thing being checked.
+	 *     Used for comparisons to determine which events to fire.
+	 * @return {boolean} True if it was inside before and has now left, false otherwise.
+	 */
+	fireEventIfReferenceHasLeft( ref ) {
+		let index = this._insideRefs.indexOf( ref );
+
+		if( index >= 0 ) {
+			const EVENT = SlimeCore_Event_Trigger.EVENT;
+
+			this._insideRefs.splice( index, 1 );
+			this.fire( EVENT.LEAVE, ref );
+
+			return true;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Check if the trigger has listeners for the leave event.
+	 * @return {boolean}
+	 */
+	hasLeaveEventListener() {
+		const EVENT = SlimeCore_Event_Trigger.EVENT;
+
+		let listOn = this._handlersOn[EVENT.LEAVE];
+		let listOnce = this._handlersOnce[EVENT.LEAVE];
+
+		return !!(listOn.length || listOnce.length);
 	}
 
 
@@ -275,23 +327,38 @@ class SlimeCore_Event_Trigger {
 	 * @param {function} fn
 	 */
 	off( eventType, fn ) {
+		const EVENT = SlimeCore_Event_Trigger.EVENT;
+
 		if( typeof fn !== 'function' ) {
 			delete this._handlersOn[eventType];
 			delete this._handlersOnce[eventType];
+
+			if( eventType === EVENT.LEAVE && this.group ) {
+				this.group.unregisterLeaveEventTrigger( this );
+			}
 		}
 		else {
-			let list = this._handlersOn[eventType];
-			let index = list.indexOf( fn );
+			let listOn = this._handlersOn[eventType];
+			let index = listOn.indexOf( fn );
 
 			if( index >= 0 ) {
-				list.splice( index, 1 );
+				listOn.splice( index, 1 );
 			}
 
-			list = this._handlersOnce[eventType];
-			index = list.indexOf( fn );
+			let listOnce = this._handlersOnce[eventType];
+			index = listOnce.indexOf( fn );
 
 			if( index >= 0 ) {
-				list.splice( index, 1 );
+				listOnce.splice( index, 1 );
+			}
+
+			if(
+				eventType === EVENT.LEAVE &&
+				this.group &&
+				!listOn.length &&
+				!listOnce.length
+			) {
+				this.group.unregisterLeaveEventTrigger( this );
 			}
 		}
 	}
@@ -303,8 +370,14 @@ class SlimeCore_Event_Trigger {
 	 * @param {function} fn
 	 */
 	on( eventType, fn ) {
+		const EVENT = SlimeCore_Event_Trigger.EVENT;
+
 		this._handlersOn[eventType] = this._handlersOn[eventType] || [];
 		this._handlersOn[eventType].push( fn );
+
+		if( eventType === EVENT.LEAVE && this.group ) {
+			this.group.registerLeaveEventTrigger( this );
+		}
 	}
 
 
@@ -315,8 +388,14 @@ class SlimeCore_Event_Trigger {
 	 * @param {function} fn
 	 */
 	once( eventType, fn ) {
+		const EVENT = SlimeCore_Event_Trigger.EVENT;
+
 		this._handlersOnce[eventType] = this._handlersOnce[eventType] || [];
 		this._handlersOnce[eventType].push( fn );
+
+		if( eventType === EVENT.LEAVE && this.group ) {
+			this.group.registerLeaveEventTrigger( this );
+		}
 	}
 
 
@@ -340,6 +419,12 @@ class SlimeCore_Event_Trigger {
 
 }
 
+
+SlimeCore_Event_Trigger.EVENT = {
+	ENTER: 'enter',
+	LEAVE: 'leave',
+	STAY: 'stay'
+};
 
 SlimeCore_Event_Trigger.SHAPE = {
 	CIRCLE: 1,
