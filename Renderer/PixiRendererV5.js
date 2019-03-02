@@ -3,7 +3,10 @@
 
 {
 
-class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
+/**
+ * Renderer for use with PixiJS v5.
+ */
+class SlimeCore_PixiRendererV5 extends SlimeCore.Renderer {
 
 
 	/**
@@ -39,11 +42,19 @@ class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
 		this._frameRequest = null;
 		this._isRunning = false;
 
-		this.renderer = PIXI.autoDetectRenderer( w, h, options );
+		options.width = w;
+		options.height = h;
+
+		if( typeof options.roundPixels !== 'undefined' ) {
+			PIXI.settings.ROUND_PIXELS = !!options.roundPixels;
+			delete options.roundPixels;
+		}
+
+		this.renderer = new PIXI.Application( options );
 		this.renderer.view.style.width = w + 'px';
 		this.renderer.view.style.height = h + 'px';
 
-		this.ticker = PIXI.ticker.shared;
+		this.ticker = this.renderer.ticker;
 		this.ticker.autoStart = false;
 		this.ticker.stop();
 
@@ -89,7 +100,7 @@ class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
 	 * @return {number}
 	 */
 	get height() {
-		return this.renderer.height;
+		return this.renderer.renderer.height;
 	}
 
 
@@ -98,7 +109,7 @@ class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
 	 * @return {number}
 	 */
 	get width() {
-		return this.renderer.width;
+		return this.renderer.renderer.width;
 	}
 
 
@@ -156,6 +167,6 @@ class SlimeCore_PixiRenderer extends SlimeCore.Renderer {
 }
 
 
-SlimeCore.Renderer.PixiRenderer = SlimeCore_PixiRenderer;
+SlimeCore.Renderer.PixiRendererV5 = SlimeCore_PixiRendererV5;
 
 }
