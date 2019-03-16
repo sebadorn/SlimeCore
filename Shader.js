@@ -1,6 +1,9 @@
 'use strict';
 
 
+/**
+ * @namespace SlimeCore.Shader
+ */
 SlimeCore.Shader = {
 
 

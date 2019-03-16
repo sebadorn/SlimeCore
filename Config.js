@@ -1,6 +1,9 @@
 'use strict';
 
 
+/**
+ * @namespace SlimeCore.Config
+ */
 SlimeCore.Config = {
 
 
@@ -10,10 +13,10 @@ SlimeCore.Config = {
 	/**
 	 * Get the config value for the given key.
 	 * @param  {string} key - Config key to a value.
-	 * @return {*} The config value or null if not found.
+	 * @return {*} The config value or undefined if not found.
 	 */
 	get( key ) {
-		return this._cfg[key] || null;
+		return this._cfg[key];
 	},
 
 
@@ -21,10 +24,10 @@ SlimeCore.Config = {
 	 * Get the config value for the given key. If it is an object,
 	 * a copy will of the object will be returned.
 	 * @param  {string} key - Config key to a value.
-	 * @return {*} The config value or null if not found.
+	 * @return {*} The config value or undefined if not found.
 	 */
 	getCopy( key ) {
-		let val = this._cfg[key] || null;
+		let val = this._cfg[key];
 
 		if( SlimeCore.Utils.isObject( val ) ) {
 			val = JSON.parse( JSON.stringify( val ) );
