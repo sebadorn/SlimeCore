@@ -32,6 +32,7 @@ class SlimeCore_Event_AreaTrigger extends SCTrigger {
 			h: 0
 		};
 
+		this._setParams( params );
 		this.calculateBoundingBox();
 	}
 
