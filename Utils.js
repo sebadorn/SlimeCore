@@ -126,7 +126,7 @@ SlimeCore.Utils = {
 	 */
 	loadFile( id, filePath, cb ) {
 		let script = document.createElement( 'script' );
-		script.id = id;
+		script.id = id.toLowerCase();
 
 		script.onerror = ( ev ) => {
 			SlimeCore.Log.error( `[SlimeCore.Utils.loadFile] Failed to load file: ${filePath}` );
@@ -139,6 +139,35 @@ SlimeCore.Utils = {
 		script.src = filePath;
 
 		document.head.appendChild( script );
+	},
+
+
+	/**
+	 * Load multiple script files in a given order.
+	 * @param {(string[]|object[])} list
+	 * @param {function}            cb
+	 */
+	loadFiles( list, cb ) {
+		let next = ( i ) => {
+			if( i >= list.length ) {
+				cb();
+				return;
+			}
+
+			let item = list[i];
+			let file = item;
+
+			if( typeof item === 'string' ) {
+				file = {
+					id: item.toLowerCase().replace( /\/|\\/g, '_' ),
+					path: item
+				};
+			}
+
+			this.loadFile( file.id, file.path, () => next( i + 1 ) );
+		};
+
+		next( 0 );
 	}
 
 
