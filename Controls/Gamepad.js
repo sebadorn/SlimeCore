@@ -312,8 +312,8 @@ SlimeCore_Controls_Gamepad.BUTTON = {
 	// PS4
 	PS_X: 0,
 	PS_CIRCLE: 1,
-	PS_TRIANGLE: 2,
-	PS_SQUARE: 3,
+	PS_SQUARE: 2,
+	PS_TRIANGLE: 3,
 
 	PS_L1: 4,
 	PS_L2: 6,
