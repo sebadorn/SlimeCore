@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.PixiCamera
+ */
 class SlimeCore_PixiCamera extends SlimeCore.Camera {
 
 
 	/**
 	 *
-	 * @constructor
+	 * @alias SlimeCore.PixiCamera
+	 * @class
 	 * @extends {SlimeCore.Camera}
 	 * @param   {?object} cfg
 	 */

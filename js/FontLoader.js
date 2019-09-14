@@ -16,13 +16,15 @@
  * However fonts which have already been loaded will not
  * trigger the event again. For this case a timeout
  * should be provided as well.
+ * @alias SlimeCore.FontLoader
  */
 class SlimeCore_FontLoader {
 
 
 	/**
 	 * FontLoader.
-	 * @constructor
+	 * @alias SlimeCore.FontLoader
+	 * @class
 	 * @param {object[]} fonts
 	 * @param {?object}  options - Optional.
 	 */

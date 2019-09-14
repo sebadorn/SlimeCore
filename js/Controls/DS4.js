@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Controls.Gamepad.DS4
+ */
 class SlimeCore_Controls_Gamepad_DS4 {
 
 
 	/**
 	 *
-	 * @constructor
+	 * @alias SlimeCore.Controls.Gamepad.DS4
+	 * @class
 	 * @param {HidDeviceInfo} device
 	 */
 	constructor( device ) {

@@ -1,0 +1,27 @@
+{
+	"docdash": {
+		"private": false,
+		"search": true,
+		"sort": true
+	},
+	"opts": {
+		"destination": "build/",
+		"encoding": "utf8",
+		"recurse": true,
+		"template": "node_modules/docdash/",
+		"verbose": true
+	},
+	"plugins": [
+		"plugins/markdown"
+	],
+	"source": {
+		"excludePattern": "node_modules/",
+		"include": "../js",
+		"includePattern": ".js$"
+	},
+	"templates": {
+		"default": {
+			"useLongnameInNav": true
+		}
+	}
+}

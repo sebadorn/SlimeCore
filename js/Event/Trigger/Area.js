@@ -6,12 +6,16 @@
 const SCTrigger = SlimeCore.Event.Trigger;
 
 
+/**
+ * @alias SlimeCore.Event.AreaTrigger
+ */
 class SlimeCore_Event_AreaTrigger extends SCTrigger {
 
 
 	/**
 	 *
-	 * @constructor
+	 * @alias SlimeCore.Event.AreaTrigger
+	 * @class
 	 * @param {number}  type              - A value from SlimeCore.Event.Trigger.TYPE.
 	 * @param {object}  params
 	 * @param {?number} params.cooldown

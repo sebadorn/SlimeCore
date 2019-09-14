@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Controls.Gamepad
+ */
 class SlimeCore_Controls_Gamepad extends SlimeCore.Controls.Controller {
 
 
 	/**
 	 * Gamepad.
-	 * @constructor
+	 * @alias SlimeCore.Controls.Gamepad
+	 * @class
 	 * @extends {SlimeCore.Controls.Controller}
 	 * @param   {Gamepad} gp
 	 */

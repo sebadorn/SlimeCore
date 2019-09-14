@@ -6,12 +6,16 @@
 const SCTrigger = SlimeCore.Event.Trigger;
 
 
+/**
+ * @alias SlimeCore.Event.TimerTrigger
+ */
 class SlimeCore_Event_TimerTrigger extends SCTrigger {
 
 
 	/**
 	 *
-	 * @constructor
+	 * @alias SlimeCore.Event.TimerTrigger
+	 * @class
 	 * @param {object}    params
 	 * @param {number}    params.interval
 	 * @param {?boolean} [params.loop = false]

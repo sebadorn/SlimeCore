@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Controls.Keyboard
+ */
 class SlimeCore_Controls_Keyboard extends SlimeCore.Controls.Controller {
 
 
 	/**
 	 * Keyboard.
-	 * @constructor
+	 * @alias SlimeCore.Controls.Keyboard
+	 * @class
 	 * @extends {SlimeCore.Controls.Controller}
 	 */
 	constructor() {

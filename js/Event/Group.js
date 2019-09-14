@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Event.Group
+ */
 class SlimeCore_Event_Group {
 
 
 	/**
 	 *
-	 * @constructor
+	 * @alias SlimeCore.Event.Group
+	 * @class
 	 */
 	constructor() {
 		this._triggers = [];

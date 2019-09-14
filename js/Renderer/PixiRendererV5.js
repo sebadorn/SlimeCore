@@ -5,13 +5,15 @@
 
 /**
  * Renderer for use with PixiJS v5.
+ * @alias SlimeCore.PixiRendererV5
  */
 class SlimeCore_PixiRendererV5 extends SlimeCore.Renderer {
 
 
 	/**
 	 * Initialize rendering.
-	 * @constructor
+	 * @alias SlimeCore.PixiRendererV5
+	 * @class
 	 * @extends {SlimeCore.Renderer}
 	 * @param  {number} w       - Renderer width.
 	 * @param  {number} h       - Renderer height.

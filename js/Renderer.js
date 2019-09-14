@@ -3,6 +3,9 @@
 
 {
 
+/**
+ * @alias SlimeCore.Renderer
+ */
 class SlimeCore_Renderer {
 
 

@@ -3,11 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Camera
+ */
 class SlimeCore_Camera {
 
 
 	/**
 	 * Camera.
+	 * @alias SlimeCore.Camera
+	 * @class
 	 * @param {?object} cfg
 	 */
 	constructor( cfg ) {

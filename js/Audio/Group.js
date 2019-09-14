@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Audio.Group
+ */
 class SlimeCore_Audio_Group {
 
 
 	/**
 	 * Audio Group.
-	 * @constructor
+	 * @alias SlimeCore.Audio.Group
+	 * @class
 	 * @param {string}                 name
 	 * @param {AudioContext}           audioContext
 	 * @param {?SlimeCore.Audio.Group} parent

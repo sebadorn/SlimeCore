@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Event.Trigger
+ */
 class SlimeCore_Event_Trigger {
 
 
 	/**
 	 *
-	 * @constructor
+	 * @alias SlimeCore.Event.Trigger
+	 * @class
 	 * @param {number} type              - A value from SlimeCore.Event.Trigger.TYPE.
 	 * @param {object} params
 	 * @param {object} params.typeParams

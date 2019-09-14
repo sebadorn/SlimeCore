@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Dialog
+ */
 class SlimeCore_Dialog {
 
 
 	/**
 	 * Dialog system.
-	 * @constructor
+	 * @alias SlimeCore.Dialog
+	 * @class
 	 * @param {?object} data - Data to build the system from.
 	 * @param {?function} onUpdate - Callback for when the view should be updated.
 	 */

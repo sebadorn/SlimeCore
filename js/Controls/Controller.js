@@ -3,12 +3,16 @@
 
 {
 
+/**
+ * @alias SlimeCore.Controls.Controller
+ */
 class SlimeCore_Controls_Controller {
 
 
 	/**
 	 * Generic controller interface to be expanded.
-	 * @constructor
+	 * @alias SlimeCore.Controls.Controller
+	 * @class
 	 */
 	constructor() {
 		//
